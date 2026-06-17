@@ -47,9 +47,12 @@ function VisionScreen() {
             </h3>
             <div className="grid gap-4 md:grid-cols-2">
               {/* Raw Input */}
-              <div className="panel-elevated rounded-lg overflow-hidden relative aspect-square border-border">
-                <div className="absolute inset-0 bg-[var(--color-secondary)]/50 grid place-items-center bg-[url('https://images.unsplash.com/photo-1598116345053-83281af1166f?q=80&w=800&auto=format&fit=crop')] bg-cover bg-center grayscale opacity-60">
-                </div>
+              <div className="panel-elevated rounded-lg overflow-hidden relative aspect-square border-border bg-black">
+                <img 
+                  src="https://images.unsplash.com/photo-1498677114624-9b2f349377bd?q=80&w=800&auto=format&fit=crop" 
+                  alt="Raw Satellite Feed" 
+                  className="absolute inset-0 w-full h-full object-cover grayscale opacity-70"
+                />
                 <div className="absolute inset-0 border border-border/50 rounded-lg pointer-events-none"></div>
                 <div className="absolute top-3 left-3 flex gap-2 items-center">
                   <span className="inline-block h-2 w-2 rounded-full bg-[var(--color-warning)] anim-pulse-node"></span>
@@ -64,12 +67,13 @@ function VisionScreen() {
 
               {/* Inferred Mask */}
               <div className="panel-elevated rounded-lg overflow-hidden relative aspect-square border-border">
-                <div className="absolute inset-0 bg-[#0d0d0d] grid place-items-center">
-                  <svg className="w-full h-full opacity-80" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <div className="absolute inset-0 bg-[#080808] grid place-items-center">
+                  <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(var(--color-verified) 1px, transparent 1px)", backgroundSize: "20px 20px" }}></div>
+                  <svg className="w-full h-full opacity-90 drop-shadow-[0_0_8px_var(--color-verified)]" viewBox="0 0 100 100" preserveAspectRatio="none">
                     {/* Simulated neural network vector extraction */}
                     <path d="M 10 90 Q 30 50 50 50 T 90 10" fill="none" stroke="var(--color-verified)" strokeWidth="1.5" className="anim-dash" />
                     <path d="M 20 10 Q 20 40 50 50 T 80 90" fill="none" stroke="var(--color-verified)" strokeWidth="1.5" className="anim-dash" />
-                    <path d="M 90 60 Q 60 70 50 50 T 10 30" fill="none" stroke="var(--color-verified)" strokeWidth="0.8" opacity="0.5" />
+                    <path d="M 90 60 Q 60 70 50 50 T 10 30" fill="none" stroke="var(--color-verified)" strokeWidth="0.8" opacity="0.3" strokeDasharray="2 2" />
                   </svg>
                 </div>
                 <div className="absolute inset-0 scanline opacity-30"></div>

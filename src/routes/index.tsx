@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import React, { useMemo, useState, useEffect } from "react";
 import { NODES, EDGES, type NodeId, type GeoNode as Node, type GeoEdge as Edge } from "../lib/geoData";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { sfx } from '../lib/audio';
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -89,7 +90,14 @@ function CommandCenter() {
         {/* SECTION A — Interactive map canvas */}
         <MapCanvas
           disabled={disabled}
-          onToggleNode={(id) => setDisabled((d) => (d === id ? null : id))}
+          onToggleNode={(id) => {
+            setDisabled((d) => {
+              const next = d === id ? null : id;
+              if (next) sfx?.playErrorBeep();
+              else sfx?.playSuccessChime();
+              return next;
+            });
+          }}
           onInspectEdge={setInspecting}
           approvals={approvals}
           hazard={hazard}
@@ -151,14 +159,10 @@ function SystemTelemetry() {
       <div className="flex-1 w-full text-[10px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
-            {/* @ts-expect-error recharts types */}
             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
             <XAxis dataKey="time" hide />
-            {/* @ts-expect-error recharts types */}
             <YAxis stroke="var(--color-muted-foreground)" fontSize={9} />
-            {/* @ts-expect-error recharts types */}
             <Line type="monotone" dataKey="cpu" stroke="var(--color-verified)" strokeWidth={2} dot={false} isAnimationActive={false} />
-            {/* @ts-expect-error recharts types */}
             <Line type="monotone" dataKey="ram" stroke="var(--color-warning)" strokeWidth={2} dot={false} isAnimationActive={false} />
           </LineChart>
         </ResponsiveContainer>
@@ -262,7 +266,7 @@ function MapCanvas(props: {
 
       {/* Canvas */}
       <div className="relative">
-        <div className="grid-bg relative h-[560px] w-full overflow-hidden">
+        <div className="grid-bg relative h-[350px] md:h-[460px] lg:h-[560px] w-full overflow-hidden">
           {/* Ambient scene: rocket launch + astronaut + orbit */}
           <SceneOverlay />
 
@@ -400,8 +404,8 @@ function MapCanvas(props: {
               return (
                 <g
                   key={n.id}
-                  onClick={() => isGK && onToggleNode(n.id)}
-                  className={isGK ? "cursor-pointer" : undefined}
+                  onClick={() => onToggleNode(n.id)}
+                  className="cursor-pointer"
                 >
                   {isGK && !isDown && (
                     <circle
@@ -700,7 +704,11 @@ function DisasterToolkit(props: {
             return (
               <button
                 key={n.id}
-                onClick={() => setDisabled(active ? null : n.id)}
+                onClick={() => {
+                  if (active) sfx?.playSuccessChime();
+                  else sfx?.playErrorBeep();
+                  setDisabled(active ? null : n.id);
+                }}
                 className={
                   "flex items-center justify-between rounded border px-2.5 py-2 text-left text-[11px] transition-colors " +
                   (active
@@ -752,7 +760,10 @@ function DisasterToolkit(props: {
         </div>
 
         <button
-          onClick={() => setDisabled(null)}
+          onClick={() => {
+            sfx?.playSuccessChime();
+            setDisabled(null);
+          }}
           className="rounded border border-border bg-panel-elevated px-3 py-2 text-[11px] font-medium text-muted-foreground hover:text-foreground"
         >
           Reset simulation

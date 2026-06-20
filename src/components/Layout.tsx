@@ -1,15 +1,21 @@
 import { Link, Outlet } from "@tanstack/react-router";
 import React, { ReactNode, useState, useEffect } from "react";
+import { LoginOverlay } from "./LoginOverlay";
 
 export function AppLayout({ children }: { children: ReactNode }) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   return (
-    <div className="min-h-screen text-foreground flex flex-col">
-      <TopBar />
-      <div className="flex-1">
-        {children}
+    <>
+      {!isLoggedIn && <LoginOverlay onAccessGranted={() => setIsLoggedIn(true)} />}
+      <div className={`min-h-screen text-foreground flex flex-col transition-all duration-1000 ${!isLoggedIn ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100 scale-100'}`}>
+        <TopBar />
+        <div className="flex-1">
+          {children}
+        </div>
+        <Footer />
       </div>
-      <Footer />
-    </div>
+    </>
   );
 }
 
@@ -28,8 +34,8 @@ export function TopBar() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur shadow-sm">
-      <div className="mx-auto flex max-w-[1600px] items-center justify-between px-4 py-2">
-        <div className="flex items-center gap-4">
+      <div className="mx-auto flex flex-col md:flex-row max-w-[1600px] md:items-center justify-between px-4 py-2">
+        <div className="flex items-center gap-4 justify-between w-full md:w-auto">
           <Logo />
           <div className="leading-tight">
             <div className="text-sm font-bold tracking-widest text-foreground">GEOROUTE-NET</div>
@@ -39,7 +45,7 @@ export function TopBar() {
           </div>
         </div>
 
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="flex items-center gap-1 overflow-x-auto pb-2 md:pb-0 scrollbar-hide w-full md:w-auto mt-4 md:mt-0">
           {[
             { label: "Vision", to: "/vision" },
             { label: "Graph", to: "/graph" },

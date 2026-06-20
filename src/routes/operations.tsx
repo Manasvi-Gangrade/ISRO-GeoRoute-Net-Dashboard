@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { sfx } from '../lib/audio';
 
 export const Route = createFileRoute("/operations")({
   head: () => ({
@@ -12,26 +13,95 @@ function OperationsScreen() {
   const [droneDispatched, setDroneDispatched] = useState(false);
   const [activeTab, setActiveTab] = useState<"predictive" | "routing" | "uav">("predictive");
 
+  const generateReport = () => {
+    sfx?.playTerminalBeep();
+    const htmlContent = `
+      <html>
+        <head>
+          <title>ISRO NNRMS - Damage Assessment Report</title>
+          <style>
+            body { font-family: 'Courier New', monospace; background: #fff; color: #000; padding: 40px; }
+            h1 { border-bottom: 2px solid #000; padding-bottom: 10px; font-size: 24px; }
+            h2 { font-size: 18px; color: #333; }
+            .header { text-align: center; margin-bottom: 40px; }
+            .meta { margin-bottom: 30px; font-size: 14px; border: 1px dashed #ccc; padding: 15px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+            th, td { border: 1px solid #000; padding: 10px; text-align: left; }
+            th { background-color: #f0f0f0; }
+            .critical { color: #d32f2f; font-weight: bold; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>NATIONAL DISASTER RESPONSE FORCE (NDRF)</h1>
+            <h2>GeoRoute-Net Incident Assessment Report</h2>
+          </div>
+          <div class="meta">
+            <p><strong>DATE:</strong> ${new Date().toISOString()}</p>
+            <p><strong>REGION:</strong> Urban Sector (Simulated)</p>
+            <p><strong>MISSION:</strong> ISRO Bharatiya Antariksh Hackathon 2026</p>
+          </div>
+          <h3>CRITICAL INFRASTRUCTURE STATUS</h3>
+          <table>
+            <tr><th>Asset ID</th><th>Classification</th><th>Status</th><th>Recommended Action</th></tr>
+            <tr><td>GK-12</td><td>Gatekeeper Node</td><td class="critical">OFFLINE (78% Failure Risk)</td><td>Deploy Class 3 Earthmovers</td></tr>
+            <tr><td>SEG-E15</td><td>River Bridge</td><td class="critical">CAPACITY EXCEEDED</td><td>Reroute via Highway Bypass</td></tr>
+            <tr><td>SEG-E5</td><td>Main Arterial</td><td>ACTIVE</td><td>Maintain clearance for SDRF</td></tr>
+          </table>
+          <p style="margin-top:50px; text-align:center; font-size: 12px;">--- END OF AUTOMATED REPORT ---</p>
+        </body>
+      </html>
+    `;
+    
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `NDRF_Assessment_Report_${new Date().getTime()}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <main className="mx-auto max-w-[1600px] p-4 anim-rise">
       <section className="panel border border-[var(--color-border)] shadow-lg">
         {/* Module Header */}
         <div className="border-b border-border px-6 py-5 bg-gradient-to-r from-background to-secondary/30">
-          <div className="flex items-center gap-3">
-            <span className="mono rounded border border-[#4c8bf5] bg-[#4c8bf5]/10 px-2 py-1 text-[10px] uppercase tracking-[0.2em] text-[#4c8bf5]">
-              Advanced Module
-            </span>
-            <h2 className="text-xl font-bold tracking-wide text-foreground flex items-center gap-2">
-              NDRF Dispatch & Predictive Intelligence
-            </h2>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-3">
+                <span className="mono rounded border border-[#4c8bf5] bg-[#4c8bf5]/10 px-2 py-1 text-[10px] uppercase tracking-[0.2em] text-[#4c8bf5]">
+                  Advanced Module
+                </span>
+                <h2 className="text-xl font-bold tracking-wide text-foreground flex items-center gap-2">
+                  NDRF Dispatch & Predictive Intelligence
+                </h2>
+              </div>
+              <p className="mt-2 text-sm text-muted-foreground max-w-3xl">
+                Next-generation features for National Disaster Response Force (NDRF). Includes multi-temporal analysis, heavy-payload routing constraints, predictive AI vulnerability forecasting, and automated UAV dispatch.
+              </p>
+            </div>
+            
+            <button 
+              onClick={generateReport}
+              className="flex items-center gap-2 rounded bg-[var(--color-primary)] px-4 py-2 text-xs font-semibold text-black hover:bg-white hover:text-black transition-colors shadow-[0_0_15px_rgba(76,139,245,0.4)]"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              Generate Report
+            </button>
           </div>
-          <p className="mt-2 text-sm text-muted-foreground max-w-3xl">
-            Next-generation features for National Disaster Response Force (NDRF). Includes multi-temporal analysis, heavy-payload routing constraints, predictive AI vulnerability forecasting, and automated UAV dispatch.
-          </p>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-border px-4 pt-4">
+        <div className="flex overflow-x-auto scrollbar-hide border-b border-border px-4 pt-4 whitespace-nowrap">
           <TabButton active={activeTab === "predictive"} onClick={() => setActiveTab("predictive")} icon="⛈️" label="Predictive Vulnerability" />
           <TabButton active={activeTab === "routing"} onClick={() => setActiveTab("routing")} icon="🚛" label="Heavy-Payload Routing" />
           <TabButton active={activeTab === "uav"} onClick={() => setActiveTab("uav")} icon="🚁" label="UAV Drone Dispatch" />
@@ -137,7 +207,10 @@ function OperationsScreen() {
                   </div>
                   
                   <button 
-                    onClick={() => setDroneDispatched(true)}
+                    onClick={() => {
+                      sfx?.playSuccessChime();
+                      setDroneDispatched(true);
+                    }}
                     disabled={droneDispatched}
                     className={`w-full rounded py-3 text-xs font-bold uppercase tracking-widest transition-all ${
                       droneDispatched 

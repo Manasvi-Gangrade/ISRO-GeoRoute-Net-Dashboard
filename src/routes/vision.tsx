@@ -49,7 +49,7 @@ function VisionScreen() {
               {/* Raw Input */}
               <div className="panel-elevated rounded-lg overflow-hidden relative aspect-square border-border bg-black">
                 <img 
-                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Cartosat-2_Series_Satellite.jpg/800px-Cartosat-2_Series_Satellite.jpg" 
+                  src="/images/image.png" 
                   alt="Raw Satellite Feed" 
                   className="absolute inset-0 w-full h-full object-cover grayscale opacity-70 mix-blend-screen"
                 />

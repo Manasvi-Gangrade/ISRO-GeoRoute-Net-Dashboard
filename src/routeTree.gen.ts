@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VisionRouteImport } from './routes/vision'
+import { Route as OperationsRouteImport } from './routes/operations'
 import { Route as GraphRouteImport } from './routes/graph'
 import { Route as ExportsRouteImport } from './routes/exports'
 import { Route as IndexRouteImport } from './routes/index'
@@ -17,6 +18,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const VisionRoute = VisionRouteImport.update({
   id: '/vision',
   path: '/vision',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OperationsRoute = OperationsRouteImport.update({
+  id: '/operations',
+  path: '/operations',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GraphRoute = GraphRouteImport.update({
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/exports': typeof ExportsRoute
   '/graph': typeof GraphRoute
+  '/operations': typeof OperationsRoute
   '/vision': typeof VisionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/exports': typeof ExportsRoute
   '/graph': typeof GraphRoute
+  '/operations': typeof OperationsRoute
   '/vision': typeof VisionRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/exports': typeof ExportsRoute
   '/graph': typeof GraphRoute
+  '/operations': typeof OperationsRoute
   '/vision': typeof VisionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/exports' | '/graph' | '/vision'
+  fullPaths: '/' | '/exports' | '/graph' | '/operations' | '/vision'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/exports' | '/graph' | '/vision'
-  id: '__root__' | '/' | '/exports' | '/graph' | '/vision'
+  to: '/' | '/exports' | '/graph' | '/operations' | '/vision'
+  id: '__root__' | '/' | '/exports' | '/graph' | '/operations' | '/vision'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ExportsRoute: typeof ExportsRoute
   GraphRoute: typeof GraphRoute
+  OperationsRoute: typeof OperationsRoute
   VisionRoute: typeof VisionRoute
 }
 
@@ -76,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/vision'
       fullPath: '/vision'
       preLoaderRoute: typeof VisionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/operations': {
+      id: '/operations'
+      path: '/operations'
+      fullPath: '/operations'
+      preLoaderRoute: typeof OperationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/graph': {
@@ -106,6 +123,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ExportsRoute: ExportsRoute,
   GraphRoute: GraphRoute,
+  OperationsRoute: OperationsRoute,
   VisionRoute: VisionRoute,
 }
 export const routeTree = rootRouteImport

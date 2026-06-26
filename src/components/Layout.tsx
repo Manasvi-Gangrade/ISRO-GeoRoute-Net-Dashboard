@@ -44,6 +44,7 @@ export function TopBar() {
             { label: "Vision", to: "/vision" },
             { label: "Graph", to: "/graph" },
             { label: "Command", to: "/" },
+            { label: "Operations", to: "/operations" },
             { label: "Exports", to: "/exports" },
           ].map((item) => (
             <Link

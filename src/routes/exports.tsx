@@ -55,7 +55,7 @@ function ExportsScreen() {
           </p>
         </div>
         
-        <div className="p-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="p-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <ExportCard 
             format="GeoJSON" 
             desc="Standard RFC 7946 textual geographic encoding. Best for web mapping." 
@@ -77,6 +77,14 @@ function ExportsScreen() {
             onDownload={() => handleDownload("KML")}
             isDownloading={downloading === "KML"}
           />
+          <ExportCard 
+            format="AI Notebooks & Data" 
+            desc="Download core Python research scripts and sample validation datasets." 
+            icon="📓" 
+            onDownload={() => handleDownload("Notebooks")}
+            isDownloading={downloading === "Notebooks"}
+            special
+          />
         </div>
       </section>
     </main>
@@ -84,16 +92,18 @@ function ExportsScreen() {
 }
 
 function ExportCard({ 
-  format, desc, icon, onDownload, isDownloading 
+  format, desc, icon, onDownload, isDownloading, special 
 }: { 
-  format: string; desc: string; icon: string; onDownload: () => void; isDownloading: boolean 
+  format: string; desc: string; icon: string; onDownload: () => void; isDownloading: boolean; special?: boolean 
 }) {
+  const hoverColor = special ? "var(--color-primary)" : "var(--color-verified)";
+  
   return (
-    <div className="group relative overflow-hidden rounded-lg border border-border bg-panel-elevated p-5 flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-[var(--color-verified)]/50 cursor-default">
+    <div className={`group relative overflow-hidden rounded-lg border border-border bg-panel-elevated p-5 flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${special ? 'border-[var(--color-primary)]/30 hover:border-[var(--color-primary)]/60' : 'hover:border-[var(--color-verified)]/50'} cursor-default`}>
       {/* Decorative gradient blob */}
-      <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[var(--color-verified)] opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-10 pointer-events-none" />
+      <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-10 pointer-events-none" style={{ backgroundColor: hoverColor }} />
       
-      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-2xl shadow-inner group-hover:bg-[var(--color-verified)]/20 transition-colors">
+      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-2xl shadow-inner transition-colors" style={{ backgroundColor: 'var(--color-secondary)' }}>
         {icon}
       </div>
       
@@ -103,13 +113,19 @@ function ExportCard({
       <button 
         onClick={onDownload}
         disabled={isDownloading}
+        style={{
+           ...( !isDownloading ? { '--hover-bg': hoverColor } as any : {} )
+        }}
         className={`relative w-full overflow-hidden rounded-md py-2.5 text-xs font-semibold uppercase tracking-wider transition-all
           ${isDownloading 
             ? "bg-[var(--color-warning)] text-warning-foreground cursor-wait" 
-            : "bg-secondary text-foreground group-hover:bg-[var(--color-verified)] group-hover:text-black group-hover:shadow-[0_0_10px_var(--color-verified)]"
+            : "bg-secondary text-foreground hover:text-black shadow-[0_0_10px_transparent] hover:shadow-[0_0_10px_var(--hover-bg)]"
           }`}
       >
-        <div className="relative z-10 flex items-center justify-center gap-2">
+        {!isDownloading && (
+          <div className="absolute inset-0 transition-colors duration-300 group-hover:bg-[var(--hover-bg)] opacity-100" style={{ zIndex: 0 }}></div>
+        )}
+        <div className="relative z-10 flex items-center justify-center gap-2 mix-blend-normal">
           {isDownloading ? (
             <>
               <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

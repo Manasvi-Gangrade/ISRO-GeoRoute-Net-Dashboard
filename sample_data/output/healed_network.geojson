@@ -1,0 +1,8 @@
+{
+  "type": "FeatureCollection",
+  "features": [{
+    "type": "Feature",
+    "properties": {"segment_name": "Primary_Artery_Healed", "reliability_score": 0.94},
+    "geometry": {"type": "LineString", "coordinates": [[77.59, 12.97], [77.61, 12.99]]}
+  }]
+}

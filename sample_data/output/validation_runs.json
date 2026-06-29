@@ -1,0 +1,12 @@
+[
+  {
+    "gap_id": "GAP_001",
+    "reliability_score": 0.694,
+    "pipeline_action": "FLAG_FOR_GIS_ANALYST_REVIEW"
+  },
+  {
+    "gap_id": "GAP_002",
+    "reliability_score": 0.076,
+    "pipeline_action": "REJECT_CONNECTION"
+  }
+]
